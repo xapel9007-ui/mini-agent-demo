@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiMo Mini Agent Demo</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --brand:#111827;
+      --brand2:#6366f1;
+      --good:#0f766e;
+      --warn:#b45309;
+      --shadow: 0 12px 30px rgba(17,24,39,.08);
+      --radius: 20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(99,102,241,.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(15,118,110,.10), transparent 28%),
+        var(--bg);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
+    .hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:20px;
+      align-items:stretch;
+      margin-top:8px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-left{
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef2ff;
+      color:#4338ca;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:16px;
+    }
+    h1{
+      font-size:clamp(30px, 4vw, 48px);
+      line-height:1.08;
+      margin:0 0 14px 0;
+      letter-spacing:-0.03em;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.8;
+      max-width:56ch;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:22px;
+    }
+    .stat{
+      padding:14px;
+      background:#fafafa;
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+    .stat b{
+      display:block;
+      font-size:20px;
+      margin-bottom:4px;
+    }
+    .stat span{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .hero-right{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .panel{
+      background:linear-gradient(180deg, #ffffff, #fbfbff);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+    }
+    .panel h3{
+      margin:0 0 8px 0;
+      font-size:15px;
+    }
+    .panel p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+    .builder{
+      margin-top:20px;
+      padding:22px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+    }
+    label{
+      display:block;
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    textarea, input, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fff;
+      color:var(--text);
+      outline:none;
+      font-size:15px;
+      transition:.15s ease;
+    }
+    textarea:focus, input:focus, select:focus{
+      border-color:#a5b4fc;
+      box-shadow:0 0 0 4px rgba(99,102,241,.12);
+    }
+    textarea{
+      min-height:130px;
+      resize:vertical;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    button{
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .primary{
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:white;
+    }
+    .secondary{
+      background:#eef2ff;
+      color:#3730a3;
+    }
+    .ghost{
+      background:#f3f4f6;
+      color:#111827;
+    }
+    button:hover{transform:translateY(-1px)}
+    .output{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:16px;
+    }
+    .output .card{
+      padding:18px;
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size:18px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      background:#ecfeff;
+      color:#0f766e;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    ul{
+      margin:0;
+      padding-left:18px;
+      color:var(--text);
+      line-height:1.8;
+    }
+    .muted{color:var(--muted)}
+    .footer-note{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:#22c55e;
+      box-shadow:0 0 0 0 rgba(34,197,94,.6);
+      animation:pulse 1.6s infinite;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+      70%{box-shadow:0 0 0 12px rgba(34,197,94,0)}
+      100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+    }
+    pre{
+      white-space:pre-wrap;
+      word-break:break-word;
+      margin:0;
+      font-family: inherit;
+      line-height:1.8;
+      color:var(--text);
+    }
+    @media (max-width: 900px){
+      .hero, .grid, .output, .stats, .row{
+        grid-template-columns:1fr;
+      }
+      .wrap{padding:14px}
+      .hero-left{padding:20px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="card hero-left">
+        <div class="badge">⚡ 纯前端 · 单文件 · 可直接上传 GitHub</div>
+        <h1>MiMo Mini Agent Demo</h1>
+        <p class="lead">
+          这是一个不用 Python、也不用 Node.js 的小创意项目。
+          它模拟一个“任务拆解 Agent”：输入目标后，自动生成问题分析、任务分解、执行建议和风险提示。
+          适合直接放到 GitHub 上公开展示。
+        </p >
+
+        <div class="stats">
+          <div class="stat"><b>1</b><span>单个文件即可运行</span></div>
+          <div class="stat"><b>0</b><span>后端依赖</span></div>
+          <div class="stat"><b>100%</b><span>浏览器打开即用</span></div>
+        </div>
+      </div>
+
+      <div class="card hero-right">
+        <div class="panel">
+          <h3>项目亮点</h3>
+          <p>输入一句需求，输出一份结构化方案。演示“Agent 式工作流”：理解目标 → 分解任务 → 生成执行顺序 → 风险检查。</p >
+        </div>
+        <div class="panel">
+          <h3>适合提交的场景</h3>
+          <p>GitHub 公开仓库、GitHub Pages 演示页、创意项目展示、评审材料截图。</p >
+        </div>
+        <div class="panel">
+          <h3>你需要做的事</h3>
+          <p>把这份代码保存成 <b>index.html</b>，上传到 GitHub 仓库根目录即可。</p >
+        </div>
+      </div>
+    </section>
+
+    <section class="card builder">
+      <div class="grid">
+        <div>
+          <label for="goal">输入你的项目目标</label>
+          <textarea id="goal" placeholder="例如：帮我做一个可以自动整理学习计划的小工具，适合学生使用。"></textarea>
+
+          <div class="row">
+            <div>
+              <label for="mode">工作模式</label>
+              <select id="mode">
+                <option value="planner">任务规划 Agent</option>
+                <option value="research">信息研究 Agent</option>
+                <option value="writer">内容生成 Agent</option>
+                <option value="assistant">通用助理 Agent</option>
+              </select>
+            </div>
+            <div>
+              <label for="time">时间预算</label>
+              <select id="time">
+                <option value="fast">5 分钟快速方案</option>
+                <option value="balanced" selected>标准方案</option>
+                <option value="deep">深度方案</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="generatePlan()">生成方案</button>
+            <button class="secondary" onclick="copyResult()">复制结果</button>
+            <button class="ghost" onclick="fillExample()">填入示例</button>
+          </div>
+
+          <div class="status"><span class="dot"></span><span id="statusText">等待输入任务目标。</span></div>
+        </div>
+
+        <div>
+          <label>项目摘要</label>
+          <div class="panel" style="height:100%">
+            <p id="summary" class="muted">
+              这里会显示一段适合放进 GitHub 项目介绍或申请表单里的简介。
+            </p >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="output">
+      <div class="card">
+        <div class="section-title">
+          <h2>核心问题</h2>
+          <span class="tag">Problem</span>
+        </div>
+        <pre id="problem">点击“生成方案”后显示。</pre>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>任务拆解</h2>
+          <span class="tag">Plan</span>
+        </div>
+        <pre id="tasks">点击“生成方案”后显示。</pre>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Agent 协作逻辑</h2>
+          <span class="tag">Workflow</span>
+        </div>
+        <pre id="workflow">点击“生成方案”后显示。</pre>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>风险与改进</h2>
+          <span class="tag">Review</span>
+        </div>
+        <pre id="risks">点击“生成方案”后显示。</pre>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      提交方式：创建一个 GitHub 仓库，把这个文件命名为 <b>index.html</b> 上传进去。
+      仓库公开后，别人就能看到；再开启 GitHub Pages，就能得到一个在线展示链接。
+    </p >
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const examples = [
+      "帮我做一个可以自动整理学习计划的小工具，适合学生使用。",
+      "做一个帮助小商家生成商品文案的网页工具。",
+      "做一个能把复杂任务拆成步骤的个人效率助手。",
+      "做一个适合 GitHub 展示的创意 AI 小项目。"
+    ];
+
+    function fillExample(){
+      $("goal").value = examples[Math.floor(Math.random() * examples.length)];
+      $("statusText").textContent = "示例已填入，点击生成方案。";
+    }
+
+    function detectDomain(text){
+      const t = text.toLowerCase();
+      if (/学习|课程|作业|考试|student|study/.test(t)) return "学习效率";
+      if (/商品|文案|营销|店铺|商家|sales|marketing/.test(t)) return "商业内容";
+      if (/总结|写作|文章|报告|essay|write/.test(t)) return "写作辅助";
+      if (/计划|拆解|任务|日程|效率|todo|project/.test(t)) return "任务管理";
+      return "通用创意";
+    }
+
+    function generatePlan(){
+      const goal = $("goal").value.trim();
+      const mode = $("mode").value;
+      const time = $("time").value;
+
+      if(!goal){
+        $("statusText").textContent = "请先输入一个目标。";
+        alert("先输入你的项目目标。");
+        return;
+      }
+
+      const domain = detectDomain(goal);
+
+      const modeText = {
+        planner: "任务规划 Agent",
+        research: "信息研究 Agent",
+        writer: "内容生成 Agent",
+        assistant: "通用助理 Agent"
+      }[mode];
+
+      const timeText = {
+        fast: "快速",
+        balanced: "标准",
+        deep: "深度"
+      }[time];
+
+      const summary = `这是一个面向 ${domain} 场景的 ${timeText} 版 ${modeText}。用户输入需求后，系统会自动分析核心目标、拆解任务、给出执行顺序，并提供风险检查清单。整个项目完全在浏览器中运行，无需后端，适合 GitHub 公开展示。`;
+      $("summary").textContent = summary;
+
+      const problemMap = {
+        学习效率: "用户常常有学习目标，但缺少可执行、可追踪的步骤，容易拖延。",
+        商业内容: "商家需要快速产出内容，但文案结构、语气和转化点不容易统一。",
+        写作辅助: "写作时常出现结构混乱、信息遗漏、重点不突出的问题。",
+        任务管理: "复杂任务往往没有被拆开，导致执行成本高、推进效率低。",
+        通用创意: "很多想法停留在“想做”，但缺少一个能快速落地的结构化方案。"
+      };
+
+      const tasksMap = {
+        fast: [
+          "1. 识别目标关键词与核心诉求",
+          "2. 输出 3 步最小可行方案",
+          "3. 给出一个立即可执行的下一步"
+        ],
+        balanced: [
+          "1. 解析输入，提取目标、对象、约束",
+          "2. 生成 4～6 个子任务，按优先级排序",
+          "3. 为每个子任务补充交付物",
+          "4. 输出风险提示和下一步行动"
+        ],
+        deep: [
+          "1. 识别目标、场景、受众、限制条件",
+          "2. 拆分成多个可并行任务",
+          "3. 为每个任务定义输入、输出、验收标准",
+          "4. 加入风险评估、回滚点和复盘步骤",
+          "5. 提供适合公开展示的摘要说明"
+        ]
+      };
+
+      const workflowMap = {
+        planner: "Planner 负责拆解目标，Executor 负责按顺序推进，Reviewer 检查遗漏和风险，最后汇总成可执行计划。",
+        research: "Researcher 先整理信息，Summarizer 提炼重点，Verifier 校验结果，最后输出结构化结论。",
+        writer: "Outline Agent 先搭结构，Draft Agent 生成初稿，Editor 负责润色，最后形成完整文本。",
+        assistant: "意图识别 → 任务分解 → 生成结果 → 自检修正 → 输出最终答案。"
+      };
+
+      const risks = [
+        "输入过于模糊时，建议先补充目标对象和使用场景。",
+        "如果想更像真正的 AI 项目，可以后续接入 API，但当前版本已可直接展示。",
+        "公开仓库里建议保留 README，写清楚项目功能、演示方式和截图。"
+      ];
+
+      $("problem").textContent = problemMap[domain];
+      $("tasks").textContent = tasksMap[time].join("\n");
+      $("workflow").textContent = workflowMap[mode] + "\n\n" +
+        "本项目的特点是：浏览器端即可运行，结构清晰，适合演示“AI 驱动的工作流”概念。";
+      $("risks").textContent = risks.join("\n");
+
+      $("statusText").textContent = `已生成 ${timeText} 版方案。`;
+    }
+
+    async function copyResult(){
+      const text = [
+        "项目摘要：",
+        $("summary").textContent,
+        "\n核心问题：",
+        $("problem").textContent,
+        "\n任务拆解：",
+        $("tasks").textContent,
+        "\nAgent 协作逻辑：",
+        $("workflow").textContent,
+        "\n风险与改进：",
+        $("risks").textContent
+      ].join("\n");
+
+      try{
+        await navigator.clipboard.writeText(text);
+        $("statusText").textContent = "结果已复制到剪贴板。";
+      }catch(e){
+        alert("复制失败。你可以手动全选复制页面内容。");
+      }
+    }
+  </script>
+</body>
+</html>
